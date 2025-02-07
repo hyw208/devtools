@@ -1,0 +1,57 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            // tested to be good
+            "name": "Python Debugger: One Source",
+            "type": "debugpy",
+            "python": "${workspaceFolder}/.venv/bin/python",
+            "request": "launch",
+            "program": "${file}",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            }
+        },
+        {
+            // tested to be good 
+            "name": "Python Debugger: devtools.api:app",
+            "type": "debugpy",
+            "python": "${workspaceFolder}/.venv/bin/python",
+            "request": "launch",
+            "module": "uvicorn",
+            "cwd": "${workspaceFolder}",
+            "justMyCode": false,
+            "args": [
+                "devtools.api:app",
+                "--reload"
+            ],"env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            }
+        },
+        {
+            "name": "Python Debugger: One Test",
+            "type": "debugpy",
+            "python": "${workspaceFolder}/.venv/bin/python",
+            "request": "launch",
+            "module": "pytest",
+            "args": [
+                "${file}"
+            ],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal"
+        },
+        {
+            // tested to be good 
+            "name": "Python Debugger: All Tests",
+            "type": "debugpy",
+            "python": "${workspaceFolder}/.venv/bin/python",
+            "request": "launch",
+            "module": "pytest",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal"
+        }
+    ]
+}
