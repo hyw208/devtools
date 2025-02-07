@@ -5,7 +5,7 @@ def app():
 
     @_api.get("/hello")
     async def root():
-        return {"message": "Hello World"}
+        return {"message": "Hello World, there 2!!"}
 
     return _api
 

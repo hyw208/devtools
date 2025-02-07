@@ -64,3 +64,27 @@ mvenv:
 .PHONY: rmvenv
 rmvenv: 
 	rm -fr .venv || true
+
+.PHONY: req
+req: 
+	poetry export --without-hashes -f requirements.txt | cut -d ';' -f1 > requirements.txt
+
+.PHONY: image
+image: 
+	docker build -t devtools .
+
+.PHONY: up
+up: 
+	docker-compose up --build 
+
+.PHONY: down
+down: 
+	docker-compose down
+
+.PHONY: watch
+watch: 
+	docker-compose watch
+
+.PHONY: colima
+colima:
+	colima stop && colima start
