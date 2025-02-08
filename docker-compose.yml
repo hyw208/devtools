@@ -1,0 +1,43 @@
+services:
+  api:
+    build: .
+    image: devtools
+    command: bash -c "python -m devtools.api"
+    environment:
+      - REDIS_URL=redis://redis:6379
+    ports:
+      - "8080:8080"
+    depends_on:
+      - redis
+
+  worker1: 
+    image: devtools
+    command: bash -c "celery -A devtools.tasks.sample worker -Q xxx -E --concurrency=1 --loglevel=DEBUG"
+    # command: >
+    #   bash -c "
+    #     while true; do
+    #       echo 'Hello from Docker Compose!'
+    #       sleep 5
+    #     done
+    #   "
+    environment:
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - api
+      - redis
+
+  worker2: 
+    image: devtools
+    command: bash -c "celery -A devtools.tasks.sample worker -Q yyy -E --concurrency=1 --loglevel=DEBUG"
+    environment:
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - api
+      - redis
+
+  redis: 
+    image: redis/redis-stack:latest
+    container_name: redis
+    ports: 
+      - "6379:6379"
+      - "8001:8001"
