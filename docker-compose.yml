@@ -12,7 +12,7 @@ services:
 
   worker1: 
     image: devtools
-    command: bash -c "celery -A devtools.tasks.sample worker -Q xxx -E --concurrency=1 --loglevel=DEBUG"
+    command: bash -c "celery -A devtools.tasks.sample worker -Q xxx --concurrency=1"
     # command: >
     #   bash -c "
     #     while true; do
@@ -28,7 +28,8 @@ services:
 
   worker2: 
     image: devtools
-    command: bash -c "celery -A devtools.tasks.sample worker -Q yyy -E --concurrency=1 --loglevel=DEBUG"
+    # command: bash -c "celery -A devtools.tasks.sample worker -Q yyy -E --concurrency=1 --loglevel=DEBUG"
+    command: bash -c "celery -A devtools.tasks.sample worker -Q yyy --concurrency=1"
     environment:
       - REDIS_URL=redis://redis:6379
     depends_on:

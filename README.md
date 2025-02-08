@@ -33,3 +33,10 @@ devtools
 3. > colima start
 4. > docker context use colima
 5. 
+
+# docker-compose 
+1. > docker-compose up
+
+# further reading 
+1. error handling https://ankurdhuriya.medium.com/handling-failures-in-celery-workers-retries-timeouts-and-error-handling-97571b131267
+2. 
