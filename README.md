@@ -37,6 +37,9 @@ devtools
 # docker-compose 
 1. > docker-compose up
 
+# docker exec 
+1. docker exec -it <container name> bash 
+   
 # further reading 
 1. error handling https://ankurdhuriya.medium.com/handling-failures-in-celery-workers-retries-timeouts-and-error-handling-97571b131267
 2. 

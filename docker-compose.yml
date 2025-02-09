@@ -2,11 +2,17 @@ services:
   api:
     build: .
     image: devtools
-    command: bash -c "python -m devtools.api"
+    # command: bash -c "python -m devtools.api"
+    command: bash -c "uvicorn devtools.api:app --reload --host 0.0.0.0 --port 8080"
+    # command: bash -c "python -m debugpy --listen 0.0.0.0:5678 -m uvicorn devtools.api:app --reload --host 0.0.0.0 --port 8080"
     environment:
       - REDIS_URL=redis://redis:6379
+    volumes:
+      # local ./devtools is mapped into container's /app/devtools for reload upon code change
+      - ./devtools:/app/devtools
     ports:
       - "8080:8080"
+      - "5678:5678"
     depends_on:
       - redis
 
