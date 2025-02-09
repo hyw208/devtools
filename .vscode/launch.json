@@ -52,6 +52,21 @@
             "module": "pytest",
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal"
+        },
+        {
+        "name": "Python Debugger: Attach From Container",
+        "type": "debugpy",
+        "request": "attach",
+        "connect": {
+            "host": "localhost",
+            "port": 5678
+        },
+        "pathMappings": [
+            {
+                "localRoot": "${workspaceFolder}/devtools",
+                "remoteRoot": "/app/devtools"
+            }
+        ]
         }
     ]
 }

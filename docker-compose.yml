@@ -5,10 +5,10 @@ services:
     # command: bash -c "python -m devtools.api"
 
     # somehow --reload below doesn't work, i had to exec into docker and touch api.py to trigger reload
-    command: uvicorn devtools.api:app --host 0.0.0.0 --port 8080 --reload
+    # command: uvicorn devtools.api:app --host 0.0.0.0 --port 8080 --reload
     
-    # TODO: didn't work, test some more
-    # command: bash -c "python -m debugpy --listen 0.0.0.0:5678 -m uvicorn devtools.api:app --reload --host 0.0.0.0 --port 8080"
+    # tested to be ok
+    command: python -m debugpy --listen 0.0.0.0:5678 -m uvicorn devtools.api:app --host 0.0.0.0 --port 8080 --reload 
     
     environment:
       - REDIS_URL=redis://redis:6379
