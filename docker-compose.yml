@@ -2,28 +2,30 @@ services:
   api:
     build: .
     image: devtools
+    # tested to be ok
     # command: bash -c "python -m devtools.api"
 
     # somehow --reload below doesn't work, i had to exec into docker and touch api.py to trigger reload
-    # command: uvicorn devtools.api:app --host 0.0.0.0 --port 8080 --reload
+    command: uvicorn devtools.api:app --host 0.0.0.0 --port 8080 --reload
     
     # tested to be ok
-    command: python -m debugpy --listen 0.0.0.0:5678 -m uvicorn devtools.api:app --host 0.0.0.0 --port 8080 --reload 
+    # command: python -m debugpy --listen 0.0.0.0:5678 -m uvicorn devtools.api:app --host 0.0.0.0 --port 8080 --reload 
     
     environment:
       - REDIS_URL=redis://redis:6379
-    volumes:
-      # local ./devtools is mapped into container's /app/devtools for reload upon code change
-      - ./devtools:/app/devtools
+    # volumes:
+    #   # local ./devtools is mapped into container's /app/devtools for reload upon code change
+    #   - ./devtools:/app/devtools
     ports:
       - "8080:8080"
-      - "5678:5678"
+      # - "5678:5678"
     depends_on:
       - redis
 
   worker1: 
     image: devtools
-    command: bash -c "celery -A devtools.tasks.sample worker -Q xxx --concurrency=1"
+    # command: bash -c "celery -A devtools.tasks.sample worker -Q xxx --concurrency=1"
+    command: python -m debugpy --listen 0.0.0.0:6789 -m celery -A devtools.tasks.sample worker -Q xxx --concurrency=1
     # command: >
     #   bash -c "
     #     while true; do
@@ -36,6 +38,11 @@ services:
     depends_on:
       - api
       - redis
+    volumes:
+      # local ./devtools is mapped into container's /app/devtools for reload upon code change
+      - ./devtools:/app/devtools
+    ports:
+      - "6789:6789"
 
   worker2: 
     image: devtools
