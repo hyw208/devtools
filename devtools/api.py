@@ -22,13 +22,20 @@ def app():
     async def hello() -> dict:
         return {"message": "Hello World DevTools!"}
 
-    @api.get("/start")
-    async def start() -> TaskOut:
+    @api.get("/sample1")
+    async def sample1() -> TaskOut:
         # res = sample.sample_task.delay(names.get_full_name())
         # return TaskOut(id=res.task_id, status=res.status)
         res = celery_app.send_task('sample', args=[names.get_full_name()], queue=random.choice(['xxx', 'yyy']))
         return TaskOut(id=res.task_id, status=res.status)
-
+    
+    @api.get("/sample2")
+    async def sample2() -> TaskOut:
+        # res = sample.sample_task.delay(names.get_full_name())
+        # return TaskOut(id=res.task_id, status=res.status)
+        res = celery_app.send_task('sample2', args=[names.get_full_name()], queue='xxx')
+        return TaskOut(id=res.task_id, status=res.status)
+    
     @api.get("/status")
     async def status(task_id: str) -> TaskOut:
         # res = sample.app.AsyncResult(task_id)
