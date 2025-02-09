@@ -69,5 +69,6 @@ services:
     ports: 
       - "7777:7777"
     depends_on:
+      - redis
       - worker1
       - worker2
