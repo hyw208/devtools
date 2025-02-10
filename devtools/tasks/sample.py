@@ -1,8 +1,10 @@
-from devtools.app import app
-from celery import Task
-import time
 import random
+import time
+
+from celery import Task
+from devtools.app import app
 from devtools.utils.logging import getLogging as logging
+
 logger = logging()
 
 class BaseTaskWithRetry(Task):

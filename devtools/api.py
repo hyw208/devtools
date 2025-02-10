@@ -1,16 +1,18 @@
-from fastapi import FastAPI
 import os
-from devtools.utils.logging import getLogging as logging
-logger = logging()
-from dotenv.main import load_dotenv
-load_dotenv()
-from pydantic import BaseModel
-from celery.result import AsyncResult, GroupResult
-import names
 import random
-from devtools.tasks import sample
+
+import names
+from celery import group, signature
+from celery.result import AsyncResult, GroupResult
+from dotenv.main import load_dotenv
+from fastapi import FastAPI
+from pydantic import BaseModel
+
 from devtools.app import app as celery_app
-from celery import chain, group, signature
+from devtools.utils.logging import getLogging as logging
+
+logger = logging()
+load_dotenv()
 
 
 class TaskOut(BaseModel):

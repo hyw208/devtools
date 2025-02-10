@@ -1,8 +1,10 @@
-from celery.app import Celery
 import os
-from devtools.utils.logging import getLogging as logging
-logger = logging()
+
+from celery.app import Celery
 from dotenv.main import load_dotenv
+from devtools.utils.logging import getLogging as logging
+
+logger = logging()
 load_dotenv()
 
 redis_url = os.getenv("REDIS_URL", "redis://0.0.0.0:6379")
