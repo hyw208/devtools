@@ -6,10 +6,10 @@ services:
     # command: bash -c "python -m devtools.api"
 
     # somehow --reload below doesn't work, i had to exec into docker and touch api.py to trigger reload
-    command: uvicorn devtools.api:app --host 0.0.0.0 --port 8080 --reload
+    # command: uvicorn devtools.api:app --host 0.0.0.0 --port 8080 --reload
     
     # tested to be ok
-    # command: python -m debugpy --listen 0.0.0.0:5678 -m uvicorn devtools.api:app --host 0.0.0.0 --port 8080 --reload 
+    command: python -m debugpy --listen 0.0.0.0:6789 -m uvicorn devtools.api:app --host 0.0.0.0 --port 8080 --reload 
     
     environment:
       - REDIS_URL=redis://redis:6379
@@ -18,14 +18,14 @@ services:
     #   - ./devtools:/app/devtools
     ports:
       - "8080:8080"
-      # - "5678:5678"
+      - "6789:6789"
     depends_on:
       - redis
 
   worker1: 
     image: devtools
-    # command: bash -c "celery -A devtools.tasks.sample worker -Q xxx --concurrency=1"
-    command: python -m debugpy --listen 0.0.0.0:6789 -m celery -A devtools.tasks.sample worker -Q xxx --concurrency=1
+    command: bash -c "celery -A devtools.tasks.sample worker -Q xxx --concurrency=1 --loglevel=DEBUG"
+    # command: python -m debugpy --listen 0.0.0.0:6789 -m celery -A devtools.tasks.sample worker -Q xxx --concurrency=1
     # command: >
     #   bash -c "
     #     while true; do
@@ -41,13 +41,13 @@ services:
     volumes:
       # local ./devtools is mapped into container's /app/devtools for reload upon code change
       - ./devtools:/app/devtools
-    ports:
-      - "6789:6789"
+    # ports:
+    #   - "6789:6789"
 
   worker2: 
     image: devtools
     # command: bash -c "celery -A devtools.tasks.sample worker -Q yyy -E --concurrency=1 --loglevel=DEBUG"
-    command: bash -c "celery -A devtools.tasks.sample worker -Q yyy --concurrency=1"
+    command: bash -c "celery -A devtools.tasks.sample worker -Q yyy --concurrency=1 --loglevel=DEBUG"
     environment:
       - REDIS_URL=redis://redis:6379
     depends_on:
@@ -72,3 +72,18 @@ services:
       - redis
       - worker1
       - worker2
+
+  database:
+    image: postgres:latest
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=alpha
+    ports:
+      - "5432:5432"
+    user: postgres
+
+volumes:
+  postgres_data:

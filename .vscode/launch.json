@@ -54,19 +54,19 @@
             "console": "integratedTerminal"
         },
         {
-        "name": "Python Debugger: Attach From Container",
-        "type": "debugpy",
-        "request": "attach",
-        "connect": {
-            "host": "localhost",
-            "port": 6789
-        },
-        "pathMappings": [
-            {
-                "localRoot": "${workspaceFolder}/devtools",
-                "remoteRoot": "/app/devtools"
-            }
-        ]
+            "name": "Python Debugger: Attach From Container",
+            "type": "debugpy",
+            "request": "attach",
+            "connect": {
+                "host": "localhost",
+                "port": 6789
+            },
+            "pathMappings": [
+                {
+                    "localRoot": "${workspaceFolder}/devtools",
+                    "remoteRoot": "/app/devtools"
+                }
+            ]
         }
     ]
 }

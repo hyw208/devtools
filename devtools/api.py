@@ -5,15 +5,18 @@ logger = logging()
 from dotenv.main import load_dotenv
 load_dotenv()
 from pydantic import BaseModel
-from celery.result import AsyncResult
+from celery.result import AsyncResult, GroupResult
 import names
 import random
 from devtools.tasks import sample
 from devtools.app import app as celery_app
+from celery import chain, group, signature
+
 
 class TaskOut(BaseModel):
     id: str
-    status: str
+    ready: bool
+    result: object = None
 
 def app():
     api = FastAPI()
@@ -27,21 +30,44 @@ def app():
         # res = sample.sample_task.delay(names.get_full_name())
         # return TaskOut(id=res.task_id, status=res.status)
         res = celery_app.send_task('sample', args=[names.get_full_name()], queue=random.choice(['xxx', 'yyy']))
-        return TaskOut(id=res.task_id, status=res.status)
+        return TaskOut(id=res.task_id, ready=res.ready())
     
     @api.get("/sample2")
     async def sample2() -> TaskOut:
         # res = sample.sample_task.delay(names.get_full_name())
         # return TaskOut(id=res.task_id, status=res.status)
         res = celery_app.send_task('sample2', args=[names.get_full_name()], queue='xxx')
-        return TaskOut(id=res.task_id, status=res.status)
-    
+        return TaskOut(id=res.task_id, ready=res.ready())
+
     @api.get("/status")
-    async def status(task_id: str) -> TaskOut:
+    async def status(id: str) -> TaskOut:
         # res = sample.app.AsyncResult(task_id)
         # return TaskOut(id=res.task_id, status=res.status)
-        res = celery_app.AsyncResult(task_id)
-        return TaskOut(id=res.task_id, status=res.status)
+        
+        # id could be AsyncResult task id or GroupResult id
+        try:
+            res = GroupResult.restore(id)
+            if res and isinstance(res, GroupResult):    
+                # GroupResult
+                logger.info("#### res is GroupResult")
+                return TaskOut(id=res.id, ready=res.ready(), result=res.get() if res.ready() else None)
+            else:
+                # AsyncResult (single task)
+                logger.info("#### res is AsyncResult")
+                res = AsyncResult(id)
+                return TaskOut(id=res.id, ready=res.ready(), result=res.get() if res.ready() else None)
+        
+        except (ValueError, TypeError) as ex:
+            return TaskOut(id=id, status="Invalid", result=str(ex))
+
+    @api.get("/grouping")
+    async def grouping() -> TaskOut:
+        add_ = signature('add', args=(1, 3), immutable=True, debug=True).set(queue=random.choice(['xxx', 'yyy']))
+        multiply_ = signature('multiply', immutable=True, args=(2, 2), debug=True).set(queue=random.choice(['xxx', 'yyy']))
+        subtract_ = signature('subtract', immutable=True, args=(6, 2), debug=True).set(queue=random.choice(['xxx', 'yyy']))
+        res = group([add_, multiply_, subtract_]).apply_async()
+        res.save() # have to save before it can be restored later
+        return TaskOut(id=res.id, ready=res.ready())
 
     return api
 

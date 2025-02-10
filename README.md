@@ -32,7 +32,7 @@ devtools
 2. mac docker -> colima
 3. > colima start
 4. > docker context use colima
-5. 
+
 
 # docker-compose 
 1. > docker-compose up
@@ -42,4 +42,10 @@ devtools
    
 # further reading 
 1. error handling https://ankurdhuriya.medium.com/handling-failures-in-celery-workers-retries-timeouts-and-error-handling-97571b131267
-2. 
+
+2. add db https://github.com/alperencubuk/fastapi-celery-redis-postgres-docker-rest-api/blob/main/api/main.py
+
+3. chaining & grouping & chording 
+   a. https://mazaherian.medium.com/mastering-task-orchestration-with-celery-exploring-groups-chains-and-chords-991f9e407a4f
+   b. https://docs.celeryq.dev/en/stable/userguide/canvas.html
+
